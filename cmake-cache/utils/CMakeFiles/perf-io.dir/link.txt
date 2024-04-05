@@ -1,0 +1,1 @@
+/usr/bin/c++ -g CMakeFiles/perf-io.dir/perf/perf-io.cc.o -o ../../build/utils/perf/ns3-dev-perf-io-debug  -Wl,-rpath,/home/pgz/Escritorio/simulador/simulador-ns3/build/lib ../../build/lib/libns3-dev-core-debug.so -Wl,--no-as-needed /usr/lib/x86_64-linux-gnu/librt.a -lpthread -Wl,--as-needed 

@@ -1,0 +1,210 @@
+Determining size of int128_t failed with the following output:
+Change Dir: /home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_cb482/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_cb482.dir/build.make CMakeFiles/cmTC_cb482.dir/build
+gmake[1]: se entra en el directorio '/home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_cb482.dir/int128_t_HAVEint128_t.c.o
+/usr/bin/cc   -fPIE -o CMakeFiles/cmTC_cb482.dir/int128_t_HAVEint128_t.c.o -c /home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CheckTypeSize/int128_t_HAVEint128_t.c
+/home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CheckTypeSize/int128_t_HAVEint128_t.c:27:22: error: ‘int128_t’ undeclared here (not in a function); did you mean ‘int32_t’?
+   27 | #define SIZE (sizeof(int128_t))
+      |                      ^~~~~~~~
+/home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CheckTypeSize/int128_t_HAVEint128_t.c:29:12: note: in expansion of macro ‘SIZE’
+   29 |   ('0' + ((SIZE / 10000)%10)),
+      |            ^~~~
+gmake[1]: *** [CMakeFiles/cmTC_cb482.dir/build.make:78: CMakeFiles/cmTC_cb482.dir/int128_t_HAVEint128_t.c.o] Error 1
+gmake[1]: se sale del directorio '/home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp'
+gmake: *** [Makefile:127: cmTC_cb482/fast] Error 2
+
+
+/home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CheckTypeSize/int128_t_HAVEint128_t.c:
+#include <sys/types.h>
+#include <stdint.h>
+#include <stddef.h>
+
+
+#undef KEY
+#if defined(__i386)
+# define KEY '_','_','i','3','8','6'
+#elif defined(__x86_64)
+# define KEY '_','_','x','8','6','_','6','4'
+#elif defined(__PPC64__)
+# define KEY '_','_','P','P','C','6','4','_','_'
+#elif defined(__ppc64__)
+# define KEY '_','_','p','p','c','6','4','_','_'
+#elif defined(__PPC__)
+# define KEY '_','_','P','P','C','_','_'
+#elif defined(__ppc__)
+# define KEY '_','_','p','p','c','_','_'
+#elif defined(__aarch64__)
+# define KEY '_','_','a','a','r','c','h','6','4','_','_'
+#elif defined(__ARM_ARCH_7A__)
+# define KEY '_','_','A','R','M','_','A','R','C','H','_','7','A','_','_'
+#elif defined(__ARM_ARCH_7S__)
+# define KEY '_','_','A','R','M','_','A','R','C','H','_','7','S','_','_'
+#endif
+
+#define SIZE (sizeof(int128_t))
+static char info_size[] =  {'I', 'N', 'F', 'O', ':', 's','i','z','e','[',
+  ('0' + ((SIZE / 10000)%10)),
+  ('0' + ((SIZE / 1000)%10)),
+  ('0' + ((SIZE / 100)%10)),
+  ('0' + ((SIZE / 10)%10)),
+  ('0' +  (SIZE    % 10)),
+  ']',
+#ifdef KEY
+  ' ','k','e','y','[', KEY, ']',
+#endif
+  '\0'};
+
+#ifdef __CLASSIC_C__
+int main(argc, argv) int argc; char *argv[];
+#else
+int main(int argc, char *argv[])
+#endif
+{
+  int require = 0;
+  require += info_size[argc];
+  (void)argv;
+  return require;
+}
+
+
+Determining size of uint128_t failed with the following output:
+Change Dir: /home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_613e2/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_613e2.dir/build.make CMakeFiles/cmTC_613e2.dir/build
+gmake[1]: se entra en el directorio '/home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_613e2.dir/uint128_t_HAVEuint128_t.c.o
+/usr/bin/cc   -fPIE -o CMakeFiles/cmTC_613e2.dir/uint128_t_HAVEuint128_t.c.o -c /home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CheckTypeSize/uint128_t_HAVEuint128_t.c
+/home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CheckTypeSize/uint128_t_HAVEuint128_t.c:27:22: error: ‘uint128_t’ undeclared here (not in a function); did you mean ‘uint32_t’?
+   27 | #define SIZE (sizeof(uint128_t))
+      |                      ^~~~~~~~~
+/home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CheckTypeSize/uint128_t_HAVEuint128_t.c:29:12: note: in expansion of macro ‘SIZE’
+   29 |   ('0' + ((SIZE / 10000)%10)),
+      |            ^~~~
+gmake[1]: *** [CMakeFiles/cmTC_613e2.dir/build.make:78: CMakeFiles/cmTC_613e2.dir/uint128_t_HAVEuint128_t.c.o] Error 1
+gmake[1]: se sale del directorio '/home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp'
+gmake: *** [Makefile:127: cmTC_613e2/fast] Error 2
+
+
+/home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CheckTypeSize/uint128_t_HAVEuint128_t.c:
+#include <sys/types.h>
+#include <stdint.h>
+#include <stddef.h>
+
+
+#undef KEY
+#if defined(__i386)
+# define KEY '_','_','i','3','8','6'
+#elif defined(__x86_64)
+# define KEY '_','_','x','8','6','_','6','4'
+#elif defined(__PPC64__)
+# define KEY '_','_','P','P','C','6','4','_','_'
+#elif defined(__ppc64__)
+# define KEY '_','_','p','p','c','6','4','_','_'
+#elif defined(__PPC__)
+# define KEY '_','_','P','P','C','_','_'
+#elif defined(__ppc__)
+# define KEY '_','_','p','p','c','_','_'
+#elif defined(__aarch64__)
+# define KEY '_','_','a','a','r','c','h','6','4','_','_'
+#elif defined(__ARM_ARCH_7A__)
+# define KEY '_','_','A','R','M','_','A','R','C','H','_','7','A','_','_'
+#elif defined(__ARM_ARCH_7S__)
+# define KEY '_','_','A','R','M','_','A','R','C','H','_','7','S','_','_'
+#endif
+
+#define SIZE (sizeof(uint128_t))
+static char info_size[] =  {'I', 'N', 'F', 'O', ':', 's','i','z','e','[',
+  ('0' + ((SIZE / 10000)%10)),
+  ('0' + ((SIZE / 1000)%10)),
+  ('0' + ((SIZE / 100)%10)),
+  ('0' + ((SIZE / 10)%10)),
+  ('0' +  (SIZE    % 10)),
+  ']',
+#ifdef KEY
+  ' ','k','e','y','[', KEY, ']',
+#endif
+  '\0'};
+
+#ifdef __CLASSIC_C__
+int main(argc, argv) int argc; char *argv[];
+#else
+int main(int argc, char *argv[])
+#endif
+{
+  int require = 0;
+  require += info_size[argc];
+  (void)argv;
+  return require;
+}
+
+
+Determining if the include file stat.h exists failed with the following output:
+Change Dir: /home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_f16a8/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_f16a8.dir/build.make CMakeFiles/cmTC_f16a8.dir/build
+gmake[1]: se entra en el directorio '/home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_f16a8.dir/CheckIncludeFile.cxx.o
+/usr/bin/c++   -fPIE -std=gnu++17 -o CMakeFiles/cmTC_f16a8.dir/CheckIncludeFile.cxx.o -c /home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx
+/home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx:1:10: fatal error: stat.h: No existe el archivo o el directorio
+    1 | #include <stat.h>
+      |          ^~~~~~~~
+compilation terminated.
+gmake[1]: *** [CMakeFiles/cmTC_f16a8.dir/build.make:78: CMakeFiles/cmTC_f16a8.dir/CheckIncludeFile.cxx.o] Error 1
+gmake[1]: se sale del directorio '/home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp'
+gmake: *** [Makefile:127: cmTC_f16a8/fast] Error 2
+
+
+
+Determining if the include file boost/units/quantity.hpp exists failed with the following output:
+Change Dir: /home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_446bf/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_446bf.dir/build.make CMakeFiles/cmTC_446bf.dir/build
+gmake[1]: se entra en el directorio '/home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_446bf.dir/CheckIncludeFile.cxx.o
+/usr/bin/c++   -fPIE -std=gnu++17 -o CMakeFiles/cmTC_446bf.dir/CheckIncludeFile.cxx.o -c /home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx
+/home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx:1:10: fatal error: boost/units/quantity.hpp: No existe el archivo o el directorio
+    1 | #include <boost/units/quantity.hpp>
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+gmake[1]: *** [CMakeFiles/cmTC_446bf.dir/build.make:78: CMakeFiles/cmTC_446bf.dir/CheckIncludeFile.cxx.o] Error 1
+gmake[1]: se sale del directorio '/home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp'
+gmake: *** [Makefile:127: cmTC_446bf/fast] Error 2
+
+
+
+Determining if the include file boost/units/systems/si.hpp exists failed with the following output:
+Change Dir: /home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_a95b7/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_a95b7.dir/build.make CMakeFiles/cmTC_a95b7.dir/build
+gmake[1]: se entra en el directorio '/home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_a95b7.dir/CheckIncludeFile.cxx.o
+/usr/bin/c++   -fPIE -std=gnu++17 -o CMakeFiles/cmTC_a95b7.dir/CheckIncludeFile.cxx.o -c /home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx
+/home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx:1:10: fatal error: boost/units/systems/si.hpp: No existe el archivo o el directorio
+    1 | #include <boost/units/systems/si.hpp>
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+gmake[1]: *** [CMakeFiles/cmTC_a95b7.dir/build.make:78: CMakeFiles/cmTC_a95b7.dir/CheckIncludeFile.cxx.o] Error 1
+gmake[1]: se sale del directorio '/home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp'
+gmake: *** [Makefile:127: cmTC_a95b7/fast] Error 2
+
+
+
+Determining if the include file net/netmap_user.h exists failed with the following output:
+Change Dir: /home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_893b1/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_893b1.dir/build.make CMakeFiles/cmTC_893b1.dir/build
+gmake[1]: se entra en el directorio '/home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_893b1.dir/CheckIncludeFile.cxx.o
+/usr/bin/c++   -fPIE -std=gnu++17 -o CMakeFiles/cmTC_893b1.dir/CheckIncludeFile.cxx.o -c /home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx
+/home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx:1:10: fatal error: net/netmap_user.h: No existe el archivo o el directorio
+    1 | #include <net/netmap_user.h>
+      |          ^~~~~~~~~~~~~~~~~~~
+compilation terminated.
+gmake[1]: *** [CMakeFiles/cmTC_893b1.dir/build.make:78: CMakeFiles/cmTC_893b1.dir/CheckIncludeFile.cxx.o] Error 1
+gmake[1]: se sale del directorio '/home/pgz/Escritorio/simulador/simulador-ns3/cmake-cache/CMakeFiles/CMakeTmp'
+gmake: *** [Makefile:127: cmTC_893b1/fast] Error 2
+
+
+

@@ -1,0 +1,122 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+# Add inputs and outputs from these tool invocations to the build variables 
+O_SRCS += \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/a2-a4-rsrq-handover-algorithm.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/a3-rsrp-handover-algorithm.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/component-carrier-enb.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/component-carrier-ue.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/component-carrier.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/cqa-ff-mac-scheduler.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/epc-enb-application.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/epc-enb-s1-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/epc-gtpc-header.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/epc-gtpu-header.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/epc-mme-application.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/epc-pgw-application.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/epc-s11-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/epc-s1ap-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/epc-sgw-application.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/epc-tft-classifier.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/epc-tft.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/epc-ue-nas.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/epc-x2-header.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/epc-x2-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/epc-x2.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/eps-bearer-tag.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/eps-bearer.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/fdbet-ff-mac-scheduler.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/fdmt-ff-mac-scheduler.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/fdtbfq-ff-mac-scheduler.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/ff-mac-common.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/ff-mac-csched-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/ff-mac-sched-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/ff-mac-scheduler.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-amc.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-anr-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-anr.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-as-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-asn1-header.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-ccm-mac-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-ccm-rrc-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-chunk-processor.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-common.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-control-messages.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-enb-cmac-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-enb-component-carrier-manager.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-enb-cphy-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-enb-mac.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-enb-net-device.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-enb-phy-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-enb-phy.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-enb-rrc.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-ffr-algorithm.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-ffr-distributed-algorithm.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-ffr-enhanced-algorithm.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-ffr-rrc-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-ffr-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-ffr-soft-algorithm.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-fr-hard-algorithm.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-fr-no-op-algorithm.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-fr-soft-algorithm.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-fr-strict-algorithm.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-handover-algorithm.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-handover-management-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-harq-phy.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-interference.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-mac-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-mi-error-model.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-net-device.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-pdcp-header.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-pdcp-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-pdcp-tag.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-pdcp.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-phy-tag.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-phy.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-radio-bearer-info.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-radio-bearer-tag.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-rlc-am-header.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-rlc-am.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-rlc-header.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-rlc-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-rlc-sdu-status-tag.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-rlc-sequence-number.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-rlc-tag.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-rlc-tm.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-rlc-um.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-rlc.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-rrc-header.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-rrc-protocol-ideal.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-rrc-protocol-real.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-rrc-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-spectrum-phy.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-spectrum-signal-parameters.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-spectrum-value-helper.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-ue-ccm-rrc-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-ue-cmac-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-ue-component-carrier-manager.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-ue-cphy-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-ue-mac.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-ue-net-device.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-ue-phy-sap.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-ue-phy.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-ue-power-control.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-ue-rrc.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/lte-vendor-specific-parameters.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/no-op-component-carrier-manager.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/no-op-handover-algorithm.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/pf-ff-mac-scheduler.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/pss-ff-mac-scheduler.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/rem-spectrum-phy.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/rr-ff-mac-scheduler.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/simple-ue-component-carrier-manager.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/tdbet-ff-mac-scheduler.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/tdmt-ff-mac-scheduler.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/tdtbfq-ff-mac-scheduler.cc.o \
+../cmake-cache/src/lte/CMakeFiles/liblte-obj.dir/model/tta-ff-mac-scheduler.cc.o 
+
+
+# Each subdirectory must supply rules for building sources it contributes
+

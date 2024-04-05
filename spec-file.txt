@@ -1,0 +1,40 @@
+# This file may be used to create an environment using:
+# $ conda create --name <env> --file <this file>
+# platform: linux-64
+@EXPLICIT
+https://conda.anaconda.org/anaconda/linux-64/_libgcc_mutex-0.1-main.tar.bz2
+https://repo.anaconda.com/pkgs/main/linux-64/ca-certificates-2023.05.30-h06a4308_0.conda
+https://repo.anaconda.com/pkgs/main/linux-64/ld_impl_linux-64-2.38-h1181459_1.conda
+https://conda.anaconda.org/anaconda/linux-64/libstdcxx-ng-11.2.0-h1234567_1.tar.bz2
+https://repo.anaconda.com/pkgs/main/noarch/tzdata-2023c-h04d1e81_0.conda
+https://conda.anaconda.org/anaconda/linux-64/libgomp-11.2.0-h1234567_1.tar.bz2
+https://conda.anaconda.org/anaconda/linux-64/_openmp_mutex-5.1-1_gnu.tar.bz2
+https://conda.anaconda.org/anaconda/linux-64/libgcc-ng-11.2.0-h1234567_1.tar.bz2
+https://conda.anaconda.org/anaconda/linux-64/bzip2-1.0.8-h7b6447c_0.tar.bz2
+https://conda.anaconda.org/anaconda/linux-64/c-ares-1.18.1-h7f8727e_0.tar.bz2
+https://conda.anaconda.org/anaconda/linux-64/expat-2.4.9-h6a678d5_0.tar.bz2
+https://conda.anaconda.org/anaconda/linux-64/libev-4.33-h7f8727e_1.tar.bz2
+https://repo.anaconda.com/pkgs/main/linux-64/libffi-3.4.4-h6a678d5_0.conda
+https://repo.anaconda.com/pkgs/main/linux-64/libuuid-1.41.5-h5eee18b_0.conda
+https://conda.anaconda.org/anaconda/linux-64/libuv-1.40.0-h7b6447c_0.tar.bz2
+https://conda.anaconda.org/anaconda/linux-64/lz4-c-1.9.4-h6a678d5_0.tar.bz2
+https://conda.anaconda.org/anaconda/linux-64/ncurses-6.4-h6a678d5_0.tar.bz2
+https://repo.anaconda.com/pkgs/main/linux-64/openssl-1.1.1u-h7f8727e_0.conda
+https://conda.anaconda.org/anaconda/linux-64/xz-5.2.10-h5eee18b_1.tar.bz2
+https://conda.anaconda.org/anaconda/linux-64/zlib-1.2.13-h5eee18b_0.tar.bz2
+https://repo.anaconda.com/pkgs/main/linux-64/ccache-3.7.9-hfe4627d_0.conda
+https://conda.anaconda.org/anaconda/linux-64/libedit-3.1.20221030-h5eee18b_0.tar.bz2
+https://conda.anaconda.org/anaconda/linux-64/libnghttp2-1.46.0-hce63b2e_0.tar.bz2
+https://conda.anaconda.org/anaconda/linux-64/libssh2-1.10.0-h8f2d780_0.tar.bz2
+https://repo.anaconda.com/pkgs/main/linux-64/readline-8.2-h5eee18b_0.conda
+https://conda.anaconda.org/anaconda/linux-64/rhash-1.4.1-h3c74f83_1.tar.bz2
+https://repo.anaconda.com/pkgs/main/linux-64/tk-8.6.12-h1ccaba5_0.conda
+https://conda.anaconda.org/anaconda/linux-64/zstd-1.5.2-ha4553b6_0.tar.bz2
+https://conda.anaconda.org/anaconda/linux-64/krb5-1.19.4-h568e23c_0.tar.bz2
+https://repo.anaconda.com/pkgs/main/linux-64/sqlite-3.41.2-h5eee18b_0.conda
+https://conda.anaconda.org/anaconda/linux-64/libcurl-7.87.0-h91b91d3_0.tar.bz2
+https://repo.anaconda.com/pkgs/main/linux-64/python-3.11.3-h7a1cb2a_0.conda
+https://conda.anaconda.org/anaconda/linux-64/cmake-3.22.1-h1fce559_0.tar.bz2
+https://repo.anaconda.com/pkgs/main/linux-64/setuptools-67.8.0-py311h06a4308_0.conda
+https://repo.anaconda.com/pkgs/main/linux-64/wheel-0.38.4-py311h06a4308_0.conda
+https://repo.anaconda.com/pkgs/main/linux-64/pip-23.1.2-py311h06a4308_0.conda

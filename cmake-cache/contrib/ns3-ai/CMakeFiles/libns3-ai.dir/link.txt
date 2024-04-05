@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -g -shared -Wl,-soname,libns3-dev-ns3-ai-debug.so -o ../../../build/lib/libns3-dev-ns3-ai-debug.so CMakeFiles/libns3-ai-obj.dir/model/memory-pool.cc.o  -Wl,--no-as-needed -Wl,--as-needed 

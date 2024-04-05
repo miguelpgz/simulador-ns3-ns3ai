@@ -1,0 +1,8 @@
+devrx_packets estacion: 17
+devtx-packets estacion: 49002
+devrx_packets punto acceso: 21770 
+devtx-packets punto acceso: 29 
+phyrx0k_packets: 82317 
+phyrxerrortrace_packets: 249 
+phytx_packets: 34379 
+RETRANSMISIONES: 957 
