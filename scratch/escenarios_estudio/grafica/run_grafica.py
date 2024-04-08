@@ -83,6 +83,18 @@ memblock_key = 2333                                         # memory block key, 
 
 distances = [0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110,115,120,125]
 paquetes = [732,1098,1464,2197,2929,4394,5859,6591]
+
+etiquetas = [
+    "ErpOfdmRate6Mbps",
+    "ErpOfdmRate9Mbps",
+    "ErpOfdmRate12Mbps",
+    "ErpOfdmRate18Mbps",
+    "ErpOfdmRate24Mbps",
+    "ErpOfdmRate36Mbps",
+    "ErpOfdmRate48Mbps",
+    "ErpOfdmRate54Mbps"
+]
+
 lista_dataframes = []
 
 exp = Experiment(mempool_key, mem_size, "estudio_grafica.cc", "./")     
@@ -121,8 +133,9 @@ try:
 
     plt.figure(figsize=(10, 6))
 
-    for df in lista_dataframes:
-        plt.plot(distances, df["meanThroughputValue"], marker='o')
+    for i in range(len(lista_dataframes)):
+        plt.plot(distances, lista_dataframes[i]["meanThroughputValue"], marker='o', label=etiquetas[i])
+        plt.legend()
 
     plt.title('Mean Throughput Value vs Distance')
     plt.xlabel('Distance (m)')
