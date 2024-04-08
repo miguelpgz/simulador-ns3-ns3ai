@@ -24,9 +24,6 @@
 
  */
 
-
-
-
 #include "ns3/core-module.h"
 #include "ns3/random-walk-2d-mobility-model.h"  // Incluye la definición del modelo de movilidad
 #include "ns3/ns3-ai-module.h"
@@ -107,10 +104,11 @@ bool keepEvidences = false;
 
 
 //añadir nº estaciones, tamaño red
-bool useARF=true;
+bool useARF=false;
 double inicioScript = 0;
 double finScript = 30;
 int posX = 0;
+int paquetesPorSegundo = 732; //6Mbps por defecto
 uint32_t numNodos = 100;
 double rxNoise = 17;
 uint32_t i = 0;
@@ -513,8 +511,6 @@ void CalculateThroughput () {
   // Verificar si aún estamos dentro del tiempo de simulación total
     if (Simulator::Now().GetSeconds() + interval.GetSeconds() < finScript) {
       Simulator::Schedule(interval, &CalculateThroughput); // Programar el próximo cálculo
-    } else {
-      std::cout << "Finalizando el cálculo del throughput." << std::endl;
     }
 }
 void CalculateTransmissionRate(){
@@ -543,6 +539,48 @@ void CalculateTransmissionRate(){
     }
 }
 
+std::string calculateMCS(int paquetesPorSegundo) {
+    const uint32_t packetSize = 1024; // Tamaño del paquete en bytes
+    const uint32_t bitsPorByte = 8;
+    // Calcular la tasa de datos en bits por segundo
+    uint64_t tasaDeDatos = static_cast<uint64_t>(paquetesPorSegundo) * packetSize * bitsPorByte;
+
+    if (tasaDeDatos <= 6000000) {
+        if(g_verbose) std::cout << "ErpOfdmRate6Mbps" << std::endl;
+
+        return "ErpOfdmRate6Mbps";
+    } else if (tasaDeDatos <= 9000000) {
+        if(g_verbose) std::cout << "ErpOfdmRate9Mbps" << std::endl;
+
+        return "ErpOfdmRate9Mbps";
+    } else if (tasaDeDatos <= 12000000) {
+        if(g_verbose) std::cout << "ErpOfdmRate12Mbps" << std::endl;
+
+        return "ErpOfdmRate12Mbps";
+    } else if (tasaDeDatos <= 18000000) {
+        if(g_verbose) std::cout << "ErpOfdmRate18Mbps" << std::endl;
+
+        return "ErpOfdmRate18Mbps";
+    } else if (tasaDeDatos <= 24000000) {
+        if(g_verbose) std::cout << "ErpOfdmRate24Mbps" << std::endl;
+
+        return "ErpOfdmRate24Mbps";
+    } else if (tasaDeDatos <= 36000000) {
+        if(g_verbose) std::cout << "ErpOfdmRate36Mbps" << std::endl;
+
+        return "ErpOfdmRate36Mbps";
+    } else if (tasaDeDatos <= 48000000) {
+        if(g_verbose) std::cout << "ErpOfdmRate48Mbps" << std::endl;
+
+        return "ErpOfdmRate48Mbps";
+    } else {
+
+        if(g_verbose) std::cout << "ErpOfdmRate54Mbps" << std::endl;
+
+        return "ErpOfdmRate54Mbps"; // Suponemos que cualquier tasa de datos más alta se ajustará a 54Mbps
+    }
+}
+
 int main(int argc, char *argv[])
 {
 //	// Activar el log del componente OnOffApplication con nivel de detalle INFO
@@ -563,6 +601,7 @@ int main(int argc, char *argv[])
     cmd.AddValue ("finScript", "Establece el final del script", finScript);
     cmd.AddValue ("keep_evidences", "Establece si se guardan evidencias de la simulacion", keepEvidences);
     cmd.AddValue ("posX", "Establece posicion ejeX del nodo estático", posX);
+    cmd.AddValue ("paquetes", "Establece los paquetes que se van a transmitir", paquetesPorSegundo);
 
     COLLECTOR collector(memblock_key);
       
@@ -583,10 +622,22 @@ int main(int argc, char *argv[])
   //Use "g-2.4GHz" standard or "a-5GHz" standard
 
 
-//  wifi.SetStandard (ns3::WIFI_STANDARD_80211a);
-//  wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
-//                                     "DataMode", StringValue("OfdmRate12Mbps"),
-//                                     "ControlMode", StringValue("OfdmRate12Mbps"));
+
+//  ErpOfdmRate6Mbps
+//   ErpOfdmRate9Mbps
+//   ErpOfdmRate12Mbps
+//   ErpOfdmRate18Mbps
+//   ErpOfdmRate24Mbps
+//   ErpOfdmRate36Mbps
+//   ErpOfdmRate48Mbps
+//   ErpOfdmRate54Mbps
+
+  wifi.SetStandard (ns3::WIFI_STANDARD_80211g);
+  wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
+                                     "DataMode", StringValue(calculateMCS(paquetesPorSegundo)),
+                                     "ControlMode", StringValue(calculateMCS(paquetesPorSegundo)));
+
+
 
   if(useARF==true){
   //Use of ARF
@@ -761,9 +812,9 @@ int main(int argc, char *argv[])
   onoff.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
   onoff.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
 
-  // Configurar la tasa de datos y el tamaño del paquete
+  // Configurar la tasa de datos y el tamaño del paquete al máximo que pueda admitir el MCS (54Mbps)
   uint32_t packetSize = 1024; // Tamaño del paquete en bytes
-  uint32_t packetsPerSecond = 50; // 50 paquetes por segundo
+  uint32_t packetsPerSecond = paquetesPorSegundo;
   DataRate dataRate(packetSize * 8 * packetsPerSecond);
 
   onoff.SetAttribute ("DataRate", DataRateValue (dataRate));
@@ -783,7 +834,7 @@ int main(int argc, char *argv[])
 
 
 
-//  //COMUNICACION CON NS3AI
+  //COMUNICACION CON NS3AI
   for (uint32_t i = 0; i < 1; ++i) {
 
     Simulator::Schedule (Seconds (29.9), [&onoff,&collector]() {
@@ -887,7 +938,10 @@ int main(int argc, char *argv[])
   std::cout << "devrx_packets estacion: " << devrx_packets << " " << std::endl;
   std::cout << "devtx-packets estacion: " << devtx_packets << " "  << std::endl;
 
-  std::cout << "devrx_packets punto acceso: " << devrxAP_packets << " " << std::endl;
+  std::cout << "MCS: " << calculateMCS(paquetesPorSegundo) << " "  << std::endl;
+  std::cout << "MCS: " << calculateMCS(paquetesPorSegundo) << " "  << std::endl;
+
+  std::cout << "devrx_ackets punto acceso: " << devrxAP_packets << " " << std::endl;
   std::cout << "devtx-packets punto acceso: " << devtxAP_packets << " "  << std::endl;
 
   std::cout << "phyrx0k_packets: " << phyrx0k_packets << " " << std::endl;
