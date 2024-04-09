@@ -107,10 +107,10 @@ bool keepEvidences = false;
 bool useARF=false;
 double inicioScript = 0;
 double finScript = 30;
-int posX = 0;
+int posX = 80;
 int paquetesPorSegundo = 732; //6Mbps por defecto
 uint32_t numNodos = 100;
-double rxNoise = 17;
+double rxNoise = 21;
 uint32_t i = 0;
 
 void
@@ -149,6 +149,8 @@ struct LayerParams {
       uint16_t destinationPort;
   };
 
+//TODO meter más ruido para mover la gráfica hacia la izquierda
+//TODO Añadir hiperparametro para añadir la cantidad de estaciones dinámicamente con schedule aleatorio entre 0 y 0.3. 
 void AddStation (NodeContainer *nodeContainer, InternetStackHelper *internetStack, WifiHelper *wifi, LayerParams* params, Ipv4AddressHelper *address, OnOffHelper *onOff) {
     Ptr<Node> node = CreateObject<Node>();
     nodeContainer->Add(node);
@@ -162,7 +164,7 @@ void AddStation (NodeContainer *nodeContainer, InternetStackHelper *internetStac
     params->mobility->SetMobilityModel("ns3::RandomWalk2dMobilityModel",
                               "Mode", StringValue("Time"),
                               "Time", TimeValue(Seconds(1.0)),
-                              "Speed", StringValue("ns3::ConstantRandomVariable[Constant=0]"), // 4 km/h in m/s
+                              "Speed", StringValue("ns3::ConstantRandomVariable[Constant=1.111]"), // 4 km/h in m/s
                               "Bounds", RectangleValue(Rectangle(-100, 100, -100, 100)));
     params->mobility->Install(node);
 
@@ -835,20 +837,21 @@ int main(int argc, char *argv[])
 
 
   //COMUNICACION CON NS3AI
-  for (uint32_t i = 0; i < 1; ++i) {
+ for (uint32_t i = 0; i < 1; ++i) {
 
+    //TODO Parar cada x segundos (0.1) para recopilar datos 
     Simulator::Schedule (Seconds (29.9), [&onoff,&collector]() {
     //showStadistics();
 
-    double sumaValoresThroughput = std::accumulate(throughputValues.begin(), throughputValues.end(), 0.0);
-    double meanThroughputValue = sumaValoresThroughput / throughputValues.size();
+   double sumaValoresThroughput = std::accumulate(throughputValues.begin(), throughputValues.end(), 0.0);
+   double meanThroughputValue = sumaValoresThroughput / throughputValues.size();
 
     collector.Func(devrx_packets,devtxAP_packets,devrxAP_packets,devtx_packets,phyrx0k_packets,phyrxerrortrace_packets,phytx_packets,retransmissionCount,meanThroughputValue);
 
-    //onoff.SetConstantRate (DataRate ("10Mbps"));
+   //onoff.SetConstantRate (DataRate ("10Mbps"));
 
-   });
-  }
+  });
+ }
    
 
 
@@ -882,7 +885,7 @@ int main(int argc, char *argv[])
 
 //  PrintNodePositions(dynamicStas);
 
-  apps.Start (Seconds (inicioScript+5));
+  apps.Start (Seconds (inicioScript));
   apps.Stop (Seconds (finScript));
   
 
