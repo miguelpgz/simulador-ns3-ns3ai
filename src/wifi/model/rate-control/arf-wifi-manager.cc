@@ -135,45 +135,101 @@ ArfWifiManager::DoReportRtsFailed (WifiRemoteStation *station)
  *
  * \param st the station that we failed to send Data
  */
-void
-ArfWifiManager::DoReportDataFailed (WifiRemoteStation *st)
-{
-  NS_LOG_FUNCTION (this << st);
-  ArfWifiRemoteStation *station = static_cast<ArfWifiRemoteStation*> (st);
-  station->m_timer++;
-  station->m_failed++;
-  station->m_success = 0;
+// void
+//Método por defecto
+// ArfWifiManager::DoReportDataFailed (WifiRemoteStation *st)
+// {
+//   NS_LOG_FUNCTION (this << st);
+//   ArfWifiRemoteStation *station = static_cast<ArfWifiRemoteStation*> (st);
+//   station->m_timer++;
+//   station->m_failed++;
+//   station->m_success = 0;
+//
+//   if (station->m_recovery)
+//     {
+//       NS_ASSERT (station->m_failed >= 1);
+//       if (station->m_failed == 1)
+//         {
+//           //need recovery fallback
+//           if (station->m_rate != 0)
+//             {
+//
+//               station->m_rate--;
+//        	   std::cout << "BAJADO MCS: " << station->m_rate << " "  << std::endl;
+//
+//             }
+//         }
+//       station->m_timer = 0;
+//     }
+//   else
+//     {
+//       NS_ASSERT (station->m_failed >= 1);
+//       if (((station->m_failed - 1) % 2) == 1)
+//         {
+//           //need normal fallback
+//           if (station->m_rate != 0)
+//             {
+//               station->m_rate--;
+//        	   std::cout << "BAJADO MCS: " << station->m_rate << " "  << std::endl;
+//
+//             }
+//         }
+//       if (station->m_failed >= 2)
+//         {
+//           station->m_timer = 0;
+//         }
+//     }
+// }
+ void
+ ArfWifiManager::DoReportDataFailed (WifiRemoteStation *st)
+ {
+   NS_LOG_FUNCTION (this << st);
+   ArfWifiRemoteStation *station = static_cast<ArfWifiRemoteStation*> (st);
+   station->m_timer++;
+   station->m_failed++;
+   station->m_success = 0;
 
-  if (station->m_recovery)
-    {
-      NS_ASSERT (station->m_failed >= 1);
-      if (station->m_failed == 1)
-        {
-          //need recovery fallback
-          if (station->m_rate != 0)
-            {
-              station->m_rate--;
-            }
-        }
-      station->m_timer = 0;
-    }
-  else
-    {
-      NS_ASSERT (station->m_failed >= 1);
-      if (((station->m_failed - 1) % 2) == 1)
-        {
-          //need normal fallback
-          if (station->m_rate != 0)
-            {
-              station->m_rate--;
-            }
-        }
-      if (station->m_failed >= 2)
-        {
-          station->m_timer = 0;
-        }
-    }
-}
+   // index = 3 porque se corresponde con el MCS de 6 Mbps
+   uint8_t minRateIndex = 3; // Modificar según sea necesario
+
+   // Verificar el modo actual directamente desde m_operationalRateSet
+   if (station->m_rate > minRateIndex) { // Solo reducir la tasa si está por encima del mínimo
+//     WifiMode currentMode = station->m_state->m_operationalRateSet[station->m_rate];
+//
+//
+//        std::cout << "current mode: " << currentMode<< std::endl;
+
+
+
+     // Comparar la tasa actual con 6 Mbps
+
+       if (station->m_recovery) {
+         if (station->m_failed == 1) {
+
+           station->m_rate--;
+           std::cout << "BAJADO MCS: " << station->m_rate << " "  << std::endl;
+
+         }
+       } else {
+         if (((station->m_failed - 1) % 2) == 1) {
+           station->m_rate--;
+
+           std::cout << "BAJADO MCS: " << station->m_rate << " "  << std::endl;
+
+         }
+       }
+
+   }
+
+   if (station->m_failed >= 2) {
+     station->m_timer = 0;
+   }
+ }
+
+
+
+
+
 
 void
 ArfWifiManager::DoReportRxOk (WifiRemoteStation *station,
@@ -189,27 +245,48 @@ void ArfWifiManager::DoReportRtsOk (WifiRemoteStation *station,
   NS_LOG_DEBUG ("station=" << station << " rts ok");
 }
 
-void ArfWifiManager::DoReportDataOk (WifiRemoteStation *st, double ackSnr, WifiMode ackMode,
-                                     double dataSnr, uint16_t dataChannelWidth, uint8_t dataNss)
-{
-  NS_LOG_FUNCTION (this << st << ackSnr << ackMode << dataSnr << dataChannelWidth << +dataNss);
-  ArfWifiRemoteStation *station = static_cast<ArfWifiRemoteStation*> (st);
-  station->m_timer++;
-  station->m_success++;
-  station->m_failed = 0;
-  station->m_recovery = false;
-  NS_LOG_DEBUG ("station=" << station << " data ok success=" << station->m_success << ", timer=" << station->m_timer);
-  if ((station->m_success == m_successThreshold
-       || station->m_timer == m_timerThreshold)
-      && (station->m_rate < (station->m_state->m_operationalRateSet.size () - 1)))
-    {
-      NS_LOG_DEBUG ("station=" << station << " inc rate");
-      station->m_rate++;
-      station->m_timer = 0;
-      station->m_success = 0;
-      station->m_recovery = true;
-    }
-}
+ void ArfWifiManager::DoReportDataOk (WifiRemoteStation *st, double ackSnr, WifiMode ackMode,
+                                      double dataSnr, uint16_t dataChannelWidth, uint8_t dataNss)
+ {
+   NS_LOG_FUNCTION (this << st << ackSnr << ackMode << dataSnr << dataChannelWidth << +dataNss);
+   ArfWifiRemoteStation *station = static_cast<ArfWifiRemoteStation*> (st);
+   station->m_timer++;
+   station->m_success++;
+   station->m_failed = 0;
+   station->m_recovery = false;
+   NS_LOG_DEBUG ("station=" << station << " data ok success=" << station->m_success << ", timer=" << station->m_timer);
+   if ((station->m_success == m_successThreshold
+        || station->m_timer == m_timerThreshold)
+       && (station->m_rate < (station->m_state->m_operationalRateSet.size () - 1)))
+     {
+       NS_LOG_DEBUG ("station=" << station << " inc rate");
+       station->m_rate++;
+       station->m_timer = 0;
+       station->m_success = 0;
+       station->m_recovery = true;
+     }
+ }
+// void ArfWifiManager::DoReportDataOk (WifiRemoteStation *st, double ackSnr, WifiMode ackMode,
+//                                      double dataSnr, uint16_t dataChannelWidth, uint8_t dataNss)
+// {
+//   NS_LOG_FUNCTION (this << st << ackSnr << ackMode << dataSnr << dataChannelWidth << +dataNss);
+//   ArfWifiRemoteStation *station = static_cast<ArfWifiRemoteStation*> (st);
+//   station->m_timer++;
+//   station->m_success++;
+//   station->m_failed = 0;
+//   station->m_recovery = false;
+//   NS_LOG_DEBUG ("station=" << station << " data ok success=" << station->m_success << ", timer=" << station->m_timer);
+//   if ((station->m_success == m_successThreshold
+//        || station->m_timer == m_timerThreshold)
+//       && (station->m_rate < (station->m_state->m_operationalRateSet.size () - 1)))
+//     {
+//       station->m_rate++;
+//       station->m_timer = 0;
+//       station->m_success = 0;
+//       station->m_recovery = true;
+//     }
+// }
+
 
 void
 ArfWifiManager::DoReportFinalRtsFailed (WifiRemoteStation *station)
