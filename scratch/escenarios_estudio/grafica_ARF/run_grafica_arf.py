@@ -57,7 +57,7 @@ class Env(Structure):
         ('phyrxerrortrace_packets', c_int),
         ('phytx_packets', c_int),
         ('retransmissions', c_int),
-        ('meanThroughputValue', c_double),
+        ('meanTransmissionRateValue', c_double),
 
         
     ]
@@ -71,87 +71,63 @@ class Act(Structure):
     ]
 
 columns = ['devrx_packets', 'devtxAP_packets', 'devrxAP_packets', 'devtx_packets', 
-           'phyrx0k_packets', 'phyrxerrortrace_packets', 'phytx_packets','retransmissions','meanThroughputValue']
+           'phyrx0k_packets', 'phyrxerrortrace_packets', 'phytx_packets','retransmissions','meanTransmissionRateValue']
 
 
 
-ns3Settings = {'finScript': 30, "verbose":False,"numStas":5}
+ns3Settings = {'finScript': 30, "verbose":False, 'posX': 0, 'paquetes':732}
 
 mempool_key = 1234                                          # memory pool key, arbitrary integer large than 1000
 mem_size = 4096                                             # memory pool size in bytes
 memblock_key = 2333                                         # memory block key, need to keep the same in the ns-3 script
 
+distances = [30,35,40,45,50,55,60,65,70,75,80,85,90,95,100]
 
-paquete = 732
-
-etiquetas = [
-    "ErpOfdmRate6Mbps",
-    "ErpOfdmRate9Mbps",
-    "ErpOfdmRate12Mbps",
-    "ErpOfdmRate18Mbps",
-    "ErpOfdmRate24Mbps",
-    "ErpOfdmRate36Mbps",
-    "ErpOfdmRate48Mbps",
-    "ErpOfdmRate54Mbps"
-]
-
-# devrx_packets estacion: 1 
-# devtx-packets estacion: 31430 
-# MCS: OfdmRate6Mbps 
-# devrx_ackets punto acceso: 30929 
-# devtx-packets punto acceso: 1 
-# phyrx0k_packets: 30935 
-# phyrxerrortrace_packets: 0 
-# phytx_packets: 62164 
-# RETRANSMISIONES: 2 
-
+etiqueta = "Using ARF"
 
 lista_dataframes = []
 
-exp = Experiment(mempool_key, mem_size, "sim_hyperparams.cc", "./")     
+exp = Experiment(mempool_key, mem_size, "estudio_grafica_arf.cc", "./")     
 
 try:
     dataframe = pd.DataFrame(columns=columns)
-    ns3Settings['paquetes'] = paquete
-    
-    exp.reset()                                             # Reset the environment
-    rl = Ns3AIRL(memblock_key, Env, Act)                    # Link the shared memory block with ns-3 script
-    setting=ns3Settings
+    for distance in distances:
+        ns3Settings['posX'] = distance
+        exp.reset()                                             # Reset the environment
+        rl = Ns3AIRL(memblock_key, Env, Act)                    # Link the shared memory block with ns-3 script
+        setting=ns3Settings
 
-    pro = exp.run(setting=ns3Settings, show_output=True)    # Set and run the ns-3 script (sim.cc)
-    while not rl.isFinish():
-        with rl as data:
-            if data == None:
+        pro = exp.run(setting=ns3Settings, show_output=True)    # Set and run the ns-3 script (sim.cc)
+        while not rl.isFinish():
+            with rl as data:
+                if data == None:
                         break
                     # AI algorithms here and put the data back to the action
                     #data.act.c = 99
 
                     # Agregamos datos al dataframe
-            row_data = [data.env.devrx_packets, data.env.devtxAP_packets, data.env.devrxAP_packets, 
+                row_data = [data.env.devrx_packets, data.env.devtxAP_packets, data.env.devrxAP_packets, 
                                 data.env.devtx_packets, data.env.phyrx0k_packets, data.env.phyrxerrortrace_packets, 
-                                data.env.phytx_packets,data.env.retransmissions, data.env.meanThroughputValue]
+                                data.env.phytx_packets,data.env.retransmissions, data.env.meanTransmissionRateValue]
                     #dataframe = dataframe.append(pd.Series(row_data, index=dataframe.columns), ignore_index=True)
-            dataframe.loc[len(dataframe)] = row_data
+                dataframe.loc[len(dataframe)] = row_data
             
             
-    pro.wait()  # Wait the ns-3 to stop
-
-    for column in columns:
-        sum_value = dataframe[column].sum()
-        print(f"La suma de la columna {column} es: {sum_value}")
+        pro.wait()  # Wait the ns-3 to stop
             #calculo_stats(dataframe)
 
 
+    plt.figure(figsize=(10, 6))
 
-    # for i in range(len(lista_dataframes)):
-    #     plt.plot(distances, lista_dataframes[i]["meanThroughputValue"], marker='o', label=etiquetas[i])
-    #     plt.legend()
+    
+    plt.plot(distances, dataframe["meanTransmissionRateValue"], marker='o', label=etiqueta)
+    plt.legend()
 
-    # plt.title('Mean Throughput Value vs Distance')
-    # plt.xlabel('Distance (m)')
-    # plt.ylabel('Mean Throughput Value (Mbps)')
-    # plt.grid(True)
-    # plt.show()
+    plt.title('Mean Transmission rate Value vs Distance')
+    plt.xlabel('Distance (m)')
+    plt.ylabel('Mean transmission rate Value (Mbps)')
+    plt.grid(True)
+    plt.show()
 
 except Exception as e:
     print('Something wrong')

@@ -18,14 +18,10 @@
  * Author: Pengyu Liu <eic_lpy@hust.edu.cn>
  *         Hao Yin <haoyin@uw.edu>
 
- TODO
- no tener en cuenta los primeros segundos de la simulacion
- bit de retransmision en cabecera del paquete para diferenciarlo
 
  */
 
 #include "ns3/core-module.h"
-#include "ns3/wifi-mac-header.h"
 #include "ns3/random-walk-2d-mobility-model.h"  // Incluye la definición del modelo de movilidad
 #include "ns3/ns3-ai-module.h"
 #include "ns3/log.h"
@@ -71,8 +67,6 @@
 #include "ns3/applications-module.h"
 #include "ns3/ipv4-flow-classifier.h"
 #include "ns3/table-based-error-rate-model.h"
-#include "ns3/random-variable-stream.h"
-
 
 using namespace std;
 using namespace ns3;
@@ -84,32 +78,21 @@ int devtxAP_packets = 0;
 int devrxAP_packets = 0;
 int devtx_packets = 0;
 int phyrx0k_packets = 0;
-int snifferRxPackets = 0;
-int snifferTxPackets = 0;
-
-
 int phyrxerrortrace_packets = 0;
 int phytx_packets = 0;
 int retransmissionCount = 0;
 
 //calculo throughput
 uint64_t totalBytesPhy = 0;
-uint64_t totalGoodBytesPhy = 0;
-
 Time startTime = Seconds (5); // Empezar después de 5 segundos para evitar el periodo de estabilización
 Time interval = Seconds (1); // Calcular el throughput cada segundo
 std::vector<double> throughputValues;
-std::vector<double> goodThroughputValues;
-
 double meanThroughputValue = 0;
 
 //calculo transmission rate
 uint64_t totalDataRate = 0; // Acumula las velocidades de transmisión
-uint64_t totalGoodDataRate = 0; // Acumula las velocidades de transmisión
-
 uint32_t totalGoodPacketsTransmitted = 0; // Contador de paquetes transmitidos
 std::vector<double> averageGoodTransmissionRateValues;
-
 
 
 bool g_verbose = false;
@@ -118,28 +101,21 @@ bool keepEvidences = false;
 
 
 //añadir nº estaciones, tamaño red
-int numStas = 0; //Por defecto no se añaden
-bool useARF=false;
+bool useARF=true;
 double inicioScript = 0;
 double finScript = 30;
-int posX = 5;
+int posX = 80;
 int paquetesPorSegundo = 732; //6Mbps por defecto
 uint32_t numNodos = 100;
 double rxNoise = 19;
-int seedValue = 1; //Semilla 1 por defecto
-int tamano_red = 95; //100m por defecto
 uint32_t i = 0;
-
-#include "ns3/arf-wifi-manager.h"
-
-using namespace ns3;
-
 
 void
 DevTxTrace (std::string context, Ptr<const Packet> p)
 {
 
     //std::cout << "Paquete enviado desde: " << context << std::endl;
+
 
   devtx_packets++;
 
@@ -162,7 +138,6 @@ void PrintNodePositions(NodeContainer *nodes) {
 
 
 
-
 struct LayerParams {
 	MobilityHelper* mobility;
       YansWifiPhyHelper* wifiPhy;
@@ -170,6 +145,7 @@ struct LayerParams {
       Ipv4Address destinationAddress;
       uint16_t destinationPort;
   };
+
 
 void AddStation (NodeContainer *nodeContainer, InternetStackHelper *internetStack, WifiHelper *wifi, LayerParams* params, Ipv4AddressHelper *address, OnOffHelper *onOff) {
     Ptr<Node> node = CreateObject<Node>();
@@ -181,11 +157,6 @@ void AddStation (NodeContainer *nodeContainer, InternetStackHelper *internetStac
     }
 
     // Mobility configuration
-
-    params->mobility->SetPositionAllocator("ns3::RandomRectanglePositionAllocator",
-                                      "X", StringValue("ns3::UniformRandomVariable[Min=" + std::to_string(-tamano_red) + "|Max=" + std::to_string(tamano_red) + "]"),
-                                      "Y", StringValue("ns3::UniformRandomVariable[Min=" + std::to_string(-tamano_red) + "|Max=" + std::to_string(tamano_red) + "]"));
-
     params->mobility->SetMobilityModel("ns3::RandomWalk2dMobilityModel",
                               "Mode", StringValue("Time"),
                               "Time", TimeValue(Seconds(1.0)),
@@ -193,17 +164,9 @@ void AddStation (NodeContainer *nodeContainer, InternetStackHelper *internetStac
                               "Bounds", RectangleValue(Rectangle(-100, 100, -100, 100)));
     params->mobility->Install(node);
 
-
-
     if (g_verbose) {
         std::cout << "Mobility model set for node " << node->GetId() << std::endl;
     }
-    Ptr<MobilityModel> mobilityModel = node->GetObject<MobilityModel>();
-
-    Vector position = mobilityModel->GetPosition();
-
-    std::cout << "Current position of node " << node->GetId() << ": (" << position.x << ", " << position.y << ")" << std::endl;
-
 
     internetStack->Install(node);
 
@@ -219,14 +182,8 @@ void AddStation (NodeContainer *nodeContainer, InternetStackHelper *internetStac
     }
 
     std::ostringstream oss;
-    std::ostringstream oss2;
-
     oss << "/NodeList/" << node->GetId() << "/DeviceList/*/Mac/MacTx";
-//    oss2 << "/NodeList/" << node->GetId() << "/DeviceList/*/Phy/State/RxOk";
-
     Config::Connect(oss.str(), MakeCallback(&DevTxTrace));
-//    Config::Connect(oss2.str(), MakeCallback(&PhyRxOkTrace));
-
 
     if (g_verbose) {
         std::cout << "Callback configured for node " << node->GetId() << std::endl;
@@ -234,6 +191,12 @@ void AddStation (NodeContainer *nodeContainer, InternetStackHelper *internetStac
 
     ApplicationContainer apps = onOff->Install(node);
 
+//    std::cout << "node container print en iteracion: " << i << std::endl;
+//    i++;
+//    PrintNodePositions(*nodeContainer);
+//    std::cout << "------------------------------------------------------------------------"<< std::endl;
+
+    // Assuming app start and stop times are set outside this snippet
 }
 
 
@@ -276,31 +239,17 @@ DevRxTraceAP (std::string context, Ptr<const Packet> p)
 }
 
 
-std::ofstream outFile;
-
-
-void PhyRxOkTrace(std::string context, Ptr<const Packet> packet, double snr, WifiMode mode, WifiPreamble preamble)
+void
+PhyRxOkTrace (std::string context, Ptr<const Packet> packet, double snr, WifiMode mode, WifiPreamble preamble)
 {
     WifiMacHeader macHeader;
-    phyrx0k_packets++;
-
-	totalBytesPhy += packet->GetSize ();
-
-
-
     if (packet->PeekHeader(macHeader)) {
-        if (macHeader.IsData()) {
-        	totalGoodBytesPhy += packet->GetSize ();
-//        	std::cout << "header: =" << macHeader.GetType()<< std::endl;
-//
-    	//std::cout << "PHYRXOK mode=" << mode << std::endl;
-           outFile << "mode: " << mode << std::endl;
-
-
+        if (macHeader.IsData()) {  // Verifica si el paquete es de datos
+            phyrx0k_packets++;
             totalGoodPacketsTransmitted++;
 
             uint64_t dataRate = mode.GetDataRate(40);
-            totalDataRate += dataRate;
+            totalDataRate += dataRate; // Acumula la tasa de datos de este paquete
 
             if (g_verbose) {
                 std::cout << "PHYRXOK mode=" << mode << " snr=" << snr << " data packet " << *packet << std::endl;
@@ -315,40 +264,6 @@ void PhyRxOkTrace(std::string context, Ptr<const Packet> packet, double snr, Wif
     }
 }
 
-//void SnifferRxTrace(std::string context, Ptr<const Packet> packet, uint16_t channelFreqMhz, WifiTxVector txVector, MpduInfo aMpdu, SignalNoiseDbm signalNoise, uint16_t extraArgument){
-//
-//    //std::cout << "txVector " << txVector << std::endl;
-//
-//    WifiMacHeader macHeader;
-//
-//    if(packet->PeekHeader(macHeader)){
-////    	std::cout << "header antes de comprobacion: =" << macHeader<< std::endl;
-//    	if(macHeader.IsData()){
-////        	std::cout << "txVector: =" << txVector.GetMode()<< std::endl;
-//
-//    	}
-//
-//    }
-//
-//}
-//
-//void SnifferTxTrace(std::string context, Ptr<const Packet> packet, uint16_t channelFreqMhz, WifiTxVector txVector, MpduInfo aMpdu, unsigned short extraParameter){
-//    //std::cout << "context " << context << std::endl;
-//    WifiMacHeader macHeader;
-//snifferRxPackets++;
-//    if(packet->PeekHeader(macHeader)){
-//        //std::cout << "header antes de comprobacion: =" << macHeader << std::endl;
-//        if(macHeader.IsData()){
-//           // std::cout << "mode TX: =" << txVector.GetMode() << std::endl;
-//        }
-//    }
-//}
-
-
-
-
-
-
 void
 PhyRxErrorTrace (std::string context, Ptr<const Packet> packet, double snr)
 {
@@ -357,7 +272,7 @@ PhyRxErrorTrace (std::string context, Ptr<const Packet> packet, double snr)
   if (g_verbose)
   {
     std::cout << "PHYRXERROR snr=" << snr << " " << *packet << std::endl;
-    std::cout << "ERROR EN TRAZA "<<std::endl;
+        std::cout << "ERROR EN TRAZA "<<std::endl;
 
   }
 }
@@ -365,8 +280,9 @@ PhyRxErrorTrace (std::string context, Ptr<const Packet> packet, double snr)
 void
 PhyTxTrace (std::string context, Ptr<const Packet> packet) //,WifiMode mode, WifiPreamble preamble, uint8_t txPower)
 {
+//    totalTransmissionRate += mode.GetDataRate(); // Sumar la velocidad de transmisión en Mbps
 
-	//totalBytesPhy += packet->GetSize ();
+	totalBytesPhy += packet->GetSize ();
 
     phytx_packets++;
     ns3::WifiMacHeader macHeader;
@@ -379,6 +295,7 @@ PhyTxTrace (std::string context, Ptr<const Packet> packet) //,WifiMode mode, Wif
     }
 
 }
+
 
 
 static void
@@ -454,6 +371,7 @@ WiFiPhyConfig ()
 
 
 
+
 void
 showStadistics(){
 
@@ -465,6 +383,34 @@ showStadistics(){
 
 }
 
+
+
+MobilityHelper
+MobilityConfig ()
+{
+  NS_LOG_INFO ("Configuring mobility.");
+  MobilityHelper mobility;
+  //double distanceToRx = 300; // meters
+
+  // Ptr<RandomDiscPositionAllocator> positionAlloc = CreateObject<RandomDiscPositionAllocator> ();
+  // positionAlloc->SetX (0);
+  // positionAlloc->SetY (0);
+  // positionAlloc->SetZ (0);
+  // Ptr<RandomVariableStream> rho = CreateObject<UniformRandomVariable> ();
+  // rho->SetAttribute ("Min", DoubleValue (0));
+  // rho->SetAttribute ("Max", DoubleValue(distanceToRx));
+  // positionAlloc->SetRho (rho);
+  //positionAlloc->Add (Vector (0.0, 0.0, 0.0));
+  //positionAlloc->Add (Vector (distanceToRx, 0.0, 0.0));
+
+  mobility.SetPositionAllocator (
+      "ns3::RandomDiscPositionAllocator", "X", StringValue ("0.0"), "Y", StringValue ("0.0"), "Z",
+      StringValue ("0.0"), "Rho",
+      StringValue ("ns3::UniformRandomVariable[Min=5|Max=30]")); //min and max in meters
+  mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
+
+  return mobility;
+}
 
 
 /**
@@ -484,7 +430,7 @@ struct Env
     int phyrxerrortrace_packets;
     int phytx_packets;
     int retransmissionsCount;
-    double meanThroughputValue;
+    double meanTransmissionRateValue;
 }Packed;
 
 
@@ -519,7 +465,7 @@ public:
     int phyrxerrortrace_packets,
     int phytx_packets,
 	int retransmissionsCount,
-	double meanThroughputValue);
+	double meanTransmissionRateValue);
 };
 
 /**
@@ -540,7 +486,7 @@ int COLLECTOR::Func(int devrx_packets,
     int phyrxerrortrace_packets,
     int phytx_packets,
 	int retransmissionsCount,
-	double meanThroughputValue)
+	double meanTransmissionRateValue)
 
 {
     auto env = EnvSetterCond();     ///< Acquire the Env memory for writing
@@ -556,13 +502,13 @@ int COLLECTOR::Func(int devrx_packets,
     env->phyrxerrortrace_packets =phyrxerrortrace_packets;
 //    env->phytx_packets = phytx_packets;
     env->retransmissionsCount = retransmissionsCount;
-    env->meanThroughputValue = meanThroughputValue;
+    env->meanTransmissionRateValue = meanTransmissionRateValue;
 
     SetCompleted();                 ///< Release the memory and update conters
     NS_LOG_DEBUG ("Ver:" << (int)SharedMemoryPool::Get()->GetMemoryVersion(m_id));
     auto act = ActionGetterCond();  ///< Acquire the Act memory for reading
     int ret = act->c;
-    //std::cout << "Simulacion parada:  " << ret;
+    std::cout << "Simulacion parada:  " << ret;
     
     GetCompleted();                 ///< Release the memory, roll back memory version and update conters
     NS_LOG_DEBUG ("Ver:" << (int)SharedMemoryPool::Get()->GetMemoryVersion(m_id));
@@ -572,22 +518,13 @@ int COLLECTOR::Func(int devrx_packets,
 void CalculateThroughput () {
 
   double throughputMbpsPhy = (totalBytesPhy * 8.0) / (interval.GetSeconds () * 1e6); // Convertir a Mbps
-  double goodThroughputMbpsPhy = (totalGoodBytesPhy * 8.0) / (interval.GetSeconds () * 1e6); // Convertir a Mbps
-
 
   if(g_verbose){
 	  std::cout << "Throughput phy: " << throughputMbpsPhy << " Mbps" << std::endl;
-	  std::cout << "GOod throughput phy: " << goodThroughputMbpsPhy << " Mbps" << std::endl;
-
 
   }
-  totalBytesPhy = 0;
-  totalGoodBytesPhy = 0;
-
-  // Reiniciar para el próximo intervalo
+  totalBytesPhy = 0; // Reiniciar para el próximo intervalo
   throughputValues.push_back(throughputMbpsPhy);
-  goodThroughputValues.push_back(goodThroughputMbpsPhy);
-
 
 
   // Verificar si aún estamos dentro del tiempo de simulación total
@@ -597,19 +534,18 @@ void CalculateThroughput () {
 }
 void CalculateTransmissionRate(){
 
-
     if (totalGoodPacketsTransmitted > 0) { // Evitar división por cero
 
     	double averageTransmissionRate = (totalDataRate / totalGoodPacketsTransmitted) / 1e6;
-    	averageGoodTransmissionRateValues.push_back(averageTransmissionRate);
 
+    	averageGoodTransmissionRateValues.push_back(averageTransmissionRate);
     	  if(g_verbose){
     	        std::cout << "Average Transmission Rate: " << averageTransmissionRate << " Mbps" << std::endl;
 
     	  }
 
     } else {
-        std::cout << "No good packets transmitted in this interval." << std::endl;
+        std::cout << "No packets transmitted in this interval." << std::endl;
     }
 
     // Reiniciar variables para el próximo intervalo
@@ -617,12 +553,11 @@ void CalculateTransmissionRate(){
     totalGoodPacketsTransmitted = 0;
 
     // Programar el próximo cálculo si aún no se alcanza el tiempo final de la simulación
-    if (Simulator::Now().GetSeconds() < finScript - 1) {
+    if (Simulator::Now().GetSeconds() < finScript - 1) { // Asume que `totalTime` es la duración total de tu simulación
         Simulator::Schedule(Seconds(1.0), &CalculateTransmissionRate);
     }
 }
 
-//Calcula el MCS apropiado para el estándar 802.11g en función del tráfico que se genera.
 std::string calculateMCS(int paquetesPorSegundo) {
     const uint32_t packetSize = 1024; // Tamaño del paquete en bytes
     const uint32_t bitsPorByte = 8;
@@ -667,13 +602,6 @@ std::string calculateMCS(int paquetesPorSegundo) {
 
 int main(int argc, char *argv[])
 {
-	outFile.open("results");
-
-	    	    // Asegurándose de que el archivo se abrió correctamente
-	    	    if (!outFile.is_open()) {
-	    	        std::cerr << "Error al abrir el archivo para escritura." << std::endl;
-	    	         // O maneja el error como prefieras
-	    	    }
 //	// Activar el log del componente OnOffApplication con nivel de detalle INFO
 //	LogComponentEnable("OnOffApplication", LOG_LEVEL_INFO);
 //
@@ -693,19 +621,12 @@ int main(int argc, char *argv[])
     cmd.AddValue ("keep_evidences", "Establece si se guardan evidencias de la simulacion", keepEvidences);
     cmd.AddValue ("posX", "Establece posicion ejeX del nodo estático", posX);
     cmd.AddValue ("paquetes", "Establece los paquetes que se van a transmitir", paquetesPorSegundo);
-    cmd.AddValue ("numStas", "Establece las estaciones que se van a añadir", numStas);
-    cmd.AddValue ("useARF", "Establece si se va a usar ARF ", useARF);
-    cmd.AddValue("seedValue", "Establece la semilla de generación para la simulación", seedValue);
-    cmd.AddValue("tam_red", "Establece el tamanio de la red", tamano_red);
-
-
 
     COLLECTOR collector(memblock_key);
       
 
-    cmd.Parse (argc, argv);
 
-    RngSeedManager::SetSeed(seedValue);
+    cmd.Parse (argc, argv);
 
 //    AsciiTraceHelper asciiTraceHelper;
 //
@@ -721,23 +642,32 @@ int main(int argc, char *argv[])
 
 
 
+//  ErpOfdmRate6Mbps
+//   ErpOfdmRate9Mbps
+//   ErpOfdmRate12Mbps
+//   ErpOfdmRate18Mbps
+//   ErpOfdmRate24Mbps
+//   ErpOfdmRate36Mbps
+//   ErpOfdmRate48Mbps
+//   ErpOfdmRate54Mbps
 
   wifi.SetStandard (ns3::WIFI_STANDARD_80211a);
+
+
 
   if(useARF==true){
   //Use of ARF
   wifi.SetRemoteStationManager ("ns3::ArfWifiManager");
-//  Config::SetDefault ("ns3::WifiRemoteStationManager::BasicMode", StringValue ("ErpOfdmRate6Mbps"));
-//  Config::SetDefault ("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue ("ErpOfdmRate6Mbps"));
 	  //wifi.SetRemoteStationManager("ns3::MinstrelHtWifiManager");
 
 
 //  wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager","DataMode", StringValue("VhtMcs9"));
   }
   else{
-      wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
-                                   "DataMode", StringValue(calculateMCS(paquetesPorSegundo)),
-                                   "ControlMode", StringValue(calculateMCS(paquetesPorSegundo)));
+	  wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
+	                                      "DataMode", StringValue(calculateMCS(paquetesPorSegundo)),
+	                                      "ControlMode", StringValue(calculateMCS(paquetesPorSegundo)));
+
   }
   
 
@@ -926,33 +856,29 @@ int main(int argc, char *argv[])
 
 
 
-//  	  COMUNICACION CON NS3AI
-  	  for(int i =0;i<=finScript*10;i++){
+  //COMUNICACION CON NS3AI
+ for (uint32_t i = 0; i < 1; ++i) {
 
-	  //TODO Parar cada x segundos (0.1) para recopilar datos
-	      Simulator::Schedule (Seconds (0.1*i), [&onoff,&collector]() {
-	      //showStadistics();
+    //TODO Parar cada x segundos (0.1) para recopilar datos
+    Simulator::Schedule (Seconds (29.9), [&onoff,&collector]() {
+    //showStadistics();
 
-//	     double sumaValoresThroughput = std::accumulate(throughputValues.begin(), throughputValues.end(), 0.0);
-//	     double meanThroughputValue = sumaValoresThroughput / throughputValues.size();
+   double sumaValoresTransmissionRate = std::accumulate(averageGoodTransmissionRateValues.begin(), averageGoodTransmissionRateValues.end(), 0.0);
+   double meanTransmissionRateValue = sumaValoresTransmissionRate / averageGoodTransmissionRateValues.size();
 
-	     double meanThroughputValue = 0;
+    collector.Func(devrx_packets,devtxAP_packets,devrxAP_packets,devtx_packets,phyrx0k_packets,phyrxerrortrace_packets,phytx_packets,retransmissionCount,meanTransmissionRateValue);
 
+   //onoff.SetConstantRate (DataRate ("10Mbps"));
 
-	      collector.Func(devrx_packets,devtxAP_packets,devrxAP_packets,devtx_packets,phyrx0k_packets,phyrxerrortrace_packets,phytx_packets,retransmissionCount,meanThroughputValue);
-	      devrx_packets = 0;
-	      devtxAP_packets = 0;
-	      devrxAP_packets = 0;
-	      devtx_packets = 0;
-	      phyrx0k_packets = 0;
-	      phyrxerrortrace_packets = 0;
-	      phytx_packets = 0;
-	      retransmissionCount = 0;
-
-	    });
-
+  });
  }
+   
 
+
+  // //Cambio de tasa de transmisión después de 20 segundos
+  // Simulator::Schedule (Seconds (4.0), [&onoff]() {
+  // onoff.SetConstantRate (DataRate ("4Mbps"));
+  // });
 
   ApplicationContainer apps;
 
@@ -965,19 +891,16 @@ int main(int argc, char *argv[])
   }
 
 
-  LayerParams* params = new LayerParams{
-          &mobilityDynamic, &wifiPhy, &wifiMac, destination, port
-      };
+//  LayerParams* params = new LayerParams{
+//          &mobilityDynamic, &wifiPhy, &wifiMac, destination, port
+//      };
 
-  Ptr<UniformRandomVariable> var = CreateObject<UniformRandomVariable> ();
-  var->SetAttribute ("Min", DoubleValue (0.0));
-  var->SetAttribute ("Max", DoubleValue (0.3));
 
-  for (int i = 0; i < numStas; i += 1) {
-      Simulator::Schedule(Seconds(var->GetValue()), &AddStation, &dynamicStas, &IPstack, &wifi, params, &addresses, &onoff);
-
-  }
-
+//  for (uint32_t i = 0; i < 28; i += 2) {
+//      Simulator::Schedule(Seconds(i * 1.0), &AddStation, &dynamicStas, &IPstack, &wifi, params, &addresses, &onoff);
+//      Simulator::Schedule(Seconds(i * 1.0+0.5), &AddStation, &dynamicStas, &IPstack, &wifi, params, &addresses, &onoff);
+//
+//  }
   Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
 
 //  PrintNodePositions(dynamicStas);
@@ -994,17 +917,15 @@ int main(int argc, char *argv[])
 
   Config::Connect ("/NodeList/1/DeviceList/*/Mac/MacTx", MakeCallback (&DevTxTrace));
   Config::Connect ("/NodeList/1/DeviceList/*/Mac/MacRx", MakeCallback (&DevRxTrace));
+  //Config::Connect("/NodeList/*/DeviceList/*/Phy/MacTxDrop", MakeCallback(&CountRetransmissions));
+
 
   Config::Connect ("/NodeList/0/DeviceList/*/Mac/MacTx", MakeCallback (&DevTxTraceAP));
   Config::Connect ("/NodeList/0/DeviceList/*/Mac/MacRx", MakeCallback (&DevRxTraceAP));
 
-  Config::Connect ("/NodeList/0/DeviceList/*/Phy/State/RxOk", MakeCallback (&PhyRxOkTrace));
+  Config::Connect ("/NodeList/*/DeviceList/*/Phy/State/RxOk", MakeCallback (&PhyRxOkTrace));
   Config::Connect ("/NodeList/*/DeviceList/*/Phy/State/RxError", MakeCallback (&PhyRxErrorTrace));
   Config::Connect ("/NodeList/*/DeviceList/*/$ns3::WifiNetDevice/Phy/PhyTxEnd", MakeCallback (&PhyTxTrace));
-
-//  Config::Connect ("/NodeList/0/DeviceList/*/Phy/MonitorSnifferRx", MakeCallback (&SnifferRxTrace));
-//  Config::Connect ("/NodeList/1/DeviceList/*/Phy/MonitorSnifferTx", MakeCallback (&SnifferTxTrace));
-
 
 
 
@@ -1031,21 +952,22 @@ int main(int argc, char *argv[])
            << "_FinScript_" << finScript << ".txt";
 
 
+
+
+
   wifiPhy.EnablePcap ("Ap", apDev.Get(0), true);
   Simulator::Run ();
+  std::cout << "Transmision rate: " << dataRate.GetBitRate()<< " " <<" RxNOise: " << rxNoise << " ARF: "<<  useARF <<" Incio script: "<< inicioScript << " Fin script: "<< finScript << std::endl;
   std::cout << "devrx_packets estacion: " << devrx_packets << " " << std::endl;
   std::cout << "devtx-packets estacion: " << devtx_packets << " "  << std::endl;
 
+  std::cout << "MCS: " << calculateMCS(paquetesPorSegundo) << " "  << std::endl;
   std::cout << "MCS: " << calculateMCS(paquetesPorSegundo) << " "  << std::endl;
 
   std::cout << "devrx_ackets punto acceso: " << devrxAP_packets << " " << std::endl;
   std::cout << "devtx-packets punto acceso: " << devtxAP_packets << " "  << std::endl;
 
   std::cout << "phyrx0k_packets: " << phyrx0k_packets << " " << std::endl;
-//  std::cout << "snifferRx_packets: " << snifferRxPackets << " " << std::endl;
-//  std::cout << "snifferTx_packets: " << snifferTxPackets << " " << std::endl;
-
-
   std::cout << "phyrxerrortrace_packets: " << phyrxerrortrace_packets << " "  << std::endl;
   std::cout << "phytx_packets: " << phytx_packets << " "  << std::endl;
   std::cout << "RETRANSMISIONES: " << retransmissionCount << " "  << std::endl;
@@ -1054,9 +976,6 @@ int main(int argc, char *argv[])
 	  for (size_t i = 0; i < throughputValues.size(); ++i) {
 	     std::cout << "THROPUGHPUT ->Intervalo: " << i + 1 << ": " << throughputValues[i] << " Mbps" << std::endl;
 	   }
-	  for (size_t i = 0; i < throughputValues.size(); ++i) {
-	 	     std::cout << "GOOD THROPUGHPUT ->Intervalo: " << i + 1 << ": " << goodThroughputValues[i] << " Mbps" << std::endl;
-	 	   }
 
 	  for (size_t i = 0; i < averageGoodTransmissionRateValues.size(); ++i) {
 	       std::cout << "TRANSMISSION RATE ->Intervalo: " << i + 1 << ": " << averageGoodTransmissionRateValues[i] << " Mbps" << std::endl;
@@ -1087,13 +1006,11 @@ int main(int argc, char *argv[])
   }
 
 
-	    outFile.close();
 
   //std::cout <<  "resultado suma total:" << "=" << collector.Func(devrx_packets,devtxAP_packets,devrxAP_packets,devtx_packets,phyrx0k_packets,phyrxerrortrace_packets,phytx_packets,phystate_packets) << std::endl;
-//  PrintNOdePositions(dynamicStas);
+//  PrintNodePositions(dynamicStas);
 
   Simulator::Destroy ();
-
 
   collector.SetFinish();
 
