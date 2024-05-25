@@ -39,11 +39,6 @@ from py_interface import *
 # shared between ns-3 and python with the same shared memory
 # using the ns3-ai model.
 
-def calculo_stats(dataframe):
-    #lista_devtx = dataframe['phytx_packets'].tolist()
-    paquetes_totales = dataframe.sum().sum() 
-    print("Mbps comunicacion:" , ((paquetes_totales*512)/0.4) / 1000 )
-
 
 
 class Env(Structure):
@@ -57,7 +52,8 @@ class Env(Structure):
         ('phyrxerrortrace_packets', c_int),
         ('phytx_packets', c_int),
         ('retransmissions', c_int),
-        ('meanThroughputValue', c_double),
+        ('throughput', c_double),
+        ('goodThroughput', c_double),
 
         
     ]
@@ -71,11 +67,11 @@ class Act(Structure):
     ]
 
 columns = ['devrx_packets', 'devtxAP_packets', 'devrxAP_packets', 'devtx_packets', 
-           'phyrx0k_packets', 'phyrxerrortrace_packets', 'phytx_packets','retransmissions','meanThroughputValue']
+           'phyrx0k_packets', 'phyrxerrortrace_packets', 'phytx_packets','retransmissions','throughput','goodThroughput','retansmissionsPerPacket']
 
 
 
-ns3Settings = {'finScript': 30, "verbose":False,"numStas":5}
+ns3Settings = {'finScript': 30, "verbose":False,"numStas":19,"w":3}
 
 mempool_key = 1234                                          # memory pool key, arbitrary integer large than 1000
 mem_size = 4096                                             # memory pool size in bytes
@@ -84,27 +80,6 @@ memblock_key = 2333                                         # memory block key, 
 
 paquete = 732
 
-etiquetas = [
-    "ErpOfdmRate6Mbps",
-    "ErpOfdmRate9Mbps",
-    "ErpOfdmRate12Mbps",
-    "ErpOfdmRate18Mbps",
-    "ErpOfdmRate24Mbps",
-    "ErpOfdmRate36Mbps",
-    "ErpOfdmRate48Mbps",
-    "ErpOfdmRate54Mbps"
-]
-
-# devrx_packets estacion: 1 
-# devtx-packets estacion: 31430 
-# MCS: OfdmRate6Mbps 
-# devrx_ackets punto acceso: 30929 
-# devtx-packets punto acceso: 1 
-# phyrx0k_packets: 30935 
-# phyrxerrortrace_packets: 0 
-# phytx_packets: 62164 
-# RETRANSMISIONES: 2 
-
 
 lista_dataframes = []
 
@@ -112,7 +87,7 @@ exp = Experiment(mempool_key, mem_size, "sim_hyperparams.cc", "./")
 
 try:
     dataframe = pd.DataFrame(columns=columns)
-    ns3Settings['paquetes'] = paquete
+    ns3Settings['useARF'] = True
     
     exp.reset()                                             # Reset the environment
     rl = Ns3AIRL(memblock_key, Env, Act)                    # Link the shared memory block with ns-3 script
@@ -129,8 +104,19 @@ try:
                     # Agregamos datos al dataframe
             row_data = [data.env.devrx_packets, data.env.devtxAP_packets, data.env.devrxAP_packets, 
                                 data.env.devtx_packets, data.env.phyrx0k_packets, data.env.phyrxerrortrace_packets, 
-                                data.env.phytx_packets,data.env.retransmissions, data.env.meanThroughputValue]
+                                data.env.phytx_packets,data.env.retransmissions, data.env.throughput, data.env.goodThroughput]
                     #dataframe = dataframe.append(pd.Series(row_data, index=dataframe.columns), ignore_index=True)
+
+            # Calcular retransmissionPerPacket
+            if data.env.phytx_packets != 0:
+                retransmission_per_packet = data.env.retransmissions / data.env.phytx_packets
+            else:
+                retransmission_per_packet = 0
+            
+            
+            row_data.append(retransmission_per_packet)
+
+
             dataframe.loc[len(dataframe)] = row_data
             
             
@@ -140,18 +126,10 @@ try:
         sum_value = dataframe[column].sum()
         print(f"La suma de la columna {column} es: {sum_value}")
             #calculo_stats(dataframe)
+    
 
-
-
-    # for i in range(len(lista_dataframes)):
-    #     plt.plot(distances, lista_dataframes[i]["meanThroughputValue"], marker='o', label=etiquetas[i])
-    #     plt.legend()
-
-    # plt.title('Mean Throughput Value vs Distance')
-    # plt.xlabel('Distance (m)')
-    # plt.ylabel('Mean Throughput Value (Mbps)')
-    # plt.grid(True)
-    # plt.show()
+    dataframe.to_csv('ns3ai_stats.csv', index=True, decimal='.')     
+  
 
 except Exception as e:
     print('Something wrong')
