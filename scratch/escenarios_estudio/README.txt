@@ -1,0 +1,1 @@
+Aquí está todo el código relativo a los scripts de ns3 que se han programado. Dentro de el directorio simulaciones-hiperparametrizadas está la integración de NS3-AI junto a los modelos. En el directorio grafica esta el script que genera la tabla de los MCS del estándar IEEE 802.11 que se vió en la memoria
